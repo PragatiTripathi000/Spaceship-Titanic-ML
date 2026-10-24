@@ -56,7 +56,22 @@ st.markdown("""
 /* ── Sidebar ────────────────────────────────────── */
 [data-testid="stSidebar"] { background: #0f172a; }
 [data-testid="stSidebar"] * { color: #e2e8f0 !important; }
-[data-testid="stSidebar"] .stRadio label { font-size: 0.92rem; }
+[data-testid="stSidebar"] .stRadio label {
+    font-size: 0.95rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: block;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+[data-testid="stSidebar"] .stRadio label:hover {
+    background: rgba(99,102,241,0.25) !important;
+}
+[data-testid="stSidebar"] .stRadio [aria-checked="true"] + label,
+[data-testid="stSidebar"] .stRadio label[data-checked="true"] {
+    background: rgba(99,102,241,0.35) !important;
+    font-weight: 700;
+}
 
 /* ── General body ───────────────────────────────── */
 h1 { color: #1e293b; font-weight: 800; }
@@ -165,6 +180,11 @@ D = load_everything()   # D = data dict
 # Sidebar
 # ══════════════════════════════════════════════════════════════════════════════
 with st.sidebar:
+    # ── Sidebar ship thumbnail ─────────────────────────────────────────────────
+    ship1 = os.path.join(BASE_DIR, "assets", "ship1.png")
+    if os.path.exists(ship1):
+        st.image(ship1, use_container_width=True)
+
     st.markdown("## 🚀 Spaceship Titanic")
     st.markdown("**B.Tech CSE · Data Science Project**")
     st.markdown("---")
@@ -206,9 +226,16 @@ def kpi(label, value, sub="", accent="#6366f1"):
 if section == "🏠  Project Overview":
 
     st.title("🚀 Spaceship Titanic")
-    st.markdown(
-        "#### Passenger Transportation Prediction Using Machine Learning"
-    )
+    st.markdown("#### Passenger Transportation Prediction Using Machine Learning")
+
+    # ── Ship image — small, centred, below the title ───────────────────────────
+    ship1 = os.path.join(BASE_DIR, "assets", "ship1.png")
+    if os.path.exists(ship1):
+        _, img_col, _ = st.columns([0.5, 2, 0.5])
+        with img_col:
+            st.image(ship1, use_container_width=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+
     st.markdown(
         "> *In the year 2912, the Spaceship Titanic collided with a spacetime anomaly, "
         "transporting nearly half its passengers to an alternate dimension. "
@@ -592,23 +619,110 @@ elif section == "🤖  Model Performance":
 
     st.markdown("---")
 
-    # ── Key insights table ────────────────────────────────────────────────────
-    st.subheader("💡 Key Metric Insights")
-    insights_df = pd.DataFrame([
-        {"Metric": "Accuracy",  "Best Model": best_acc["Model"],
-         "Score": f"{best_acc['Accuracy']:.4f}",
-         "What it means": "Fewest overall misclassifications"},
-        {"Metric": "Precision", "Best Model": best_prec["Model"],
-         "Score": f"{best_prec['Precision']:.4f}",
-         "What it means": "Fewest false 'Transported' predictions"},
-        {"Metric": "Recall",    "Best Model": best_rec["Model"],
-         "Score": f"{best_rec['Recall']:.4f}",
-         "What it means": "Best at catching all transported passengers"},
-        {"Metric": "F1-Score",  "Best Model": best_f1["Model"],
-         "Score": f"{best_f1['F1-Score']:.4f}",
-         "What it means": "Best precision–recall balance"},
-    ])
-    st.dataframe(insights_df.set_index("Metric"), use_container_width=True)
+    # ── Understanding the Metrics ─────────────────────────────────────────────
+    st.subheader("📖 Understanding the Metrics")
+    st.markdown(
+        "Not sure what these numbers mean? Here is a plain-English explanation "
+        "of each metric — all calculated on passengers the model had **never seen** "
+        "during training."
+    )
+
+    mc1, mc2 = st.columns(2, gap="large")
+    with mc1:
+        st.markdown(
+            """
+            **🎯 Accuracy**
+            Out of every prediction the model made, what percentage was correct?
+            For example, 78.95% accuracy means the model got roughly 8 out of
+            10 passengers right.
+
+            **🔬 Precision**
+            When the model says a passenger *was* transported, how often is it
+            actually right? High precision means fewer false alarms — the model
+            does not incorrectly label people as transported too often.
+            """
+        )
+    with mc2:
+        st.markdown(
+            """
+            **🔍 Recall**
+            Out of every passenger who *actually was* transported, how many did
+            the model successfully catch? High recall means fewer transported
+            passengers are missed.
+
+            **⚖️ F1-Score**
+            A single number that balances both precision and recall. It is
+            useful when you want a model that is good at both — not just one
+            or the other.
+            """
+        )
+
+    st.markdown("---")
+
+    # ── Model Insights ────────────────────────────────────────────────────────
+    st.subheader("💡 Model Insights")
+    st.markdown(
+        "The table below summarises which model wins on each metric and what "
+        "that means in practice. All values are read directly from the "
+        "evaluation results — nothing is hardcoded."
+    )
+
+    insights_data = [
+        {
+            "Metric":      "✅ Accuracy",
+            "Best Model":  best_acc["Model"],
+            "Score":       f"{best_acc['Accuracy']*100:.2f}%",
+            "What this means": (
+                f"{best_acc['Model']} made the most correct predictions overall "
+                f"— getting {best_acc['Accuracy']*100:.2f}% of all passengers right."
+            ),
+        },
+        {
+            "Metric":      "🔬 Precision",
+            "Best Model":  best_prec["Model"],
+            "Score":       f"{best_prec['Precision']*100:.2f}%",
+            "What this means": (
+                f"When {best_prec['Model']} predicted a passenger was transported, "
+                f"it was correct {best_prec['Precision']*100:.2f}% of the time — "
+                "the fewest false transported predictions."
+            ),
+        },
+        {
+            "Metric":      "🔍 Recall",
+            "Best Model":  best_rec["Model"],
+            "Score":       f"{best_rec['Recall']*100:.2f}%",
+            "What this means": (
+                f"{best_rec['Model']} caught {best_rec['Recall']*100:.2f}% of all "
+                "passengers who were actually transported — the best at not missing them."
+            ),
+        },
+        {
+            "Metric":      "⚖️ F1-Score",
+            "Best Model":  best_f1["Model"],
+            "Score":       f"{best_f1['F1-Score']*100:.2f}%",
+            "What this means": (
+                f"{best_f1['Model']} has the best balance between precision and recall "
+                f"with an F1-score of {best_f1['F1-Score']*100:.2f}%."
+            ),
+        },
+    ]
+
+    insights_df = pd.DataFrame(insights_data).set_index("Metric")
+
+    def highlight_score(col):
+        return ["color: #065f46; font-weight: 700;" for _ in col]
+
+    st.dataframe(
+        insights_df.style.apply(highlight_score, subset=["Score"]),
+        use_container_width=True,
+    )
+
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.info(
+        f"🏆 **Best overall model: {best_acc['Model']}** "
+        f"with {best_acc['Accuracy']*100:.2f}% accuracy on the held-out test set. "
+        "This is the model used in the Passenger Prediction section."
+    )
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -961,11 +1075,11 @@ elif section == "📝  Findings & Conclusion":
         **Future scope:**
         - Hyperparameter tuning with cross-validation (GridSearchCV).
         - Ensemble methods (Random Forest, XGBoost).
-        - Using the Kaggle test set for a real leaderboard submission.
         """
     )
 
     st.markdown("---")
+
     st.caption(
         "Dashboard by Pragati · B.Tech CSE · Data Science Project · "
         "Kaggle Spaceship Titanic Dataset"
