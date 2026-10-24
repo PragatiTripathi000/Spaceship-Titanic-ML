@@ -106,11 +106,8 @@ Spaceship-Titanic-ML/
 *Note: The structure above shows the main project files. Additional files, such as `.gitignore`, may also be present.*
 
 ## Future Scope
-- Explore additional feature engineering techniques.
-- Experiment with alternative missing-value handling and categorical encoding strategies.
-- Improve model performance through systematic experimentation and hyperparameter tuning.
-- Deploy the Streamlit application online for public access.
-- Evaluate the model on additional unseen data.
+- Hyperparameter tuning with cross-validation (GridSearchCV).
+- Ensemble methods (Random Forest, XGBoost).
 
 ## Conclusion
 This project demonstrates an end-to-end machine learning workflow, including exploratory data analysis, data preprocessing, feature engineering, classification model comparison, and development of an interactive prediction application. It provides practical experience in applying machine learning techniques to a real-world-style classification problem.
