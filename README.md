@@ -93,17 +93,17 @@ Make sure the dataset and all required project files are present in their expect
 ## Repository Structure
 ```text
 Spaceship-Titanic-ML/
+├── assets/
+│   └── ship1.png                          ← spaceship image used in the dashboard
 ├── data/
-│   └── train.csv
+│   └── train.csv                          ← Kaggle Spaceship Titanic training dataset
 ├── notebooks/
-│   └── spaceship_titanic_analysis.ipynb
-├── app.py
-├── preprocessing.py
-├── requirements.txt
+│   └── spaceship_titanic_analysis.ipynb   ← full EDA, preprocessing, and model training
+├── app.py                                 ← Streamlit dashboard
+├── preprocessing.py                       ← replicates the notebook pipeline for the dashboard
+├── requirements.txt                       ← Python dependencies
 └── README.md
 ```
-
-*Note: The structure above shows the main project files. Additional files, such as `.gitignore`, may also be present.*
 
 ## Future Scope
 - Hyperparameter tuning with cross-validation (GridSearchCV).
