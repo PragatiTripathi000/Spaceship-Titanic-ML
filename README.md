@@ -93,6 +93,8 @@ Make sure the dataset and all required project files are present in their expect
 ## Repository Structure
 ```text
 Spaceship-Titanic-ML/
+|-- streamlit
+    |--config.toml
 ├── assets/
 │   └── ship1.png                          ← spaceship image used in the dashboard
 ├── data/
